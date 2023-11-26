@@ -14,9 +14,11 @@ struct MovieController: RouteCollection {
         
         movie.post(use: create)
         movie.get(use: index)
+        movie.put(use: update)
         
         movie.group(":movieId") { movie in
             movie.get(use: show)
+            movie.delete(use: delete)
         }
     }
     
@@ -37,5 +39,29 @@ struct MovieController: RouteCollection {
         }
         
         return movie
+    }
+    
+    func update(req: Request) async throws -> HTTPStatus {
+        let updatedMovie = try req.content.decode(Movie.self)
+        
+        guard let movie = try await Movie.find(updatedMovie.id, on: req.db) else {
+            throw Abort.init(.notFound)
+        }
+        
+        movie.title = updatedMovie.title
+        
+        try await movie.update(on: req.db)
+        
+        return .ok
+    }
+    
+    func delete(req: Request) async throws -> HTTPStatus {
+        guard let movie = try await Movie.find(req.parameters.get("movieId"), on: req.db) else {
+            throw Abort.init(.notFound)
+        }
+        
+        try await movie.delete(on: req.db)
+        
+        return .ok
     }
 }
