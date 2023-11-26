@@ -19,6 +19,7 @@ public func configure(_ app: Application) async throws {
 
     app.migrations.add(CreateTodo())
     app.migrations.add(CreateMovie())
+    app.migrations.add(CreateReview())
 
     // register routes
     try routes(app)

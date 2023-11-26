@@ -21,6 +21,9 @@ final class Movie: Model, Content {
     @Field(key: "imageURL")
     var imageURL: String
     
+    @Children(for: \.$movie)
+    var reviews: [Review]
+    
     init() {}
     
     init(id: UUID? = nil, title: String, imageURL: String) {
