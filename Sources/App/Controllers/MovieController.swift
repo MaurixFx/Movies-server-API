@@ -13,6 +13,7 @@ struct MovieController: RouteCollection {
         let movie = routes.grouped("movies")
         
         movie.post(use: create)
+        movie.get(use: index)
     }
     
     func create(req: Request) async throws -> Movie {
@@ -20,5 +21,9 @@ struct MovieController: RouteCollection {
         try await movie.save(on: req.db)
         
         return movie
+    }
+    
+    func index(req: Request) async throws -> [Movie] {
+        try await Movie.query(on: req.db).all()
     }
 }
